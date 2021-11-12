@@ -58,7 +58,7 @@ public class Demo {
         }
 
         float sum = 0;
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 1000; i++) {
             float angle = (float)(Math.random() * 2 * Math.PI);
             float[] input =  {map(angle, -1, 1, 0, 1)};
             float out = brain.getOutputs(input)[0];
