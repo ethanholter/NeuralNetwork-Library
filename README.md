@@ -1,18 +1,23 @@
-## Getting Started
+## Overview
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+This is my first attempt at creating a supervised learning neural network library. It includes a 'NeuralNetwork' class and a minimal 'Matrix' class to more easily handle the math.
+
+Overall this project is intended as learning experience and is in no way, shape, or form optimized for practical applications.
+
+Big thanks to 'the Coding Train' on Youtube for the helpful videos https://www.youtube.com/c/TheCodingTrain
 
 ## Folder Structure
 
 The workspace contains two folders by default, where:
 
 - `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+- `bin`: the folder where compiled java files are generated
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Future Plans
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- implement the ability to have a custom number of layers
+- add more activation functions
+- implement alternative learning algorithms (genetic/evolution)
+- implement importing and exporting of network models
+- add more examples to showcase the abilities of this library (currently just XOR problem)
