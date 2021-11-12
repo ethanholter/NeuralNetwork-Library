@@ -2,11 +2,13 @@ import java.util.Arrays;
 
 public class Demo {
     public static void main(String[] args) {
-        NeuralNetwork brain = new NeuralNetwork(2, 20, 1);
-        trainXOR(brain);
+        NeuralNetwork brain = new NeuralNetwork(2, 4, 1);
+        brain.trainingCoef = 0.1f;
+        testXOR(brain);
+
     }
 
-    public static void trainXOR(NeuralNetwork brain) {
+    public static void testXOR(NeuralNetwork brain) {
         float[] inputs = new float[2];
         float[] answers = new float[1];
 
