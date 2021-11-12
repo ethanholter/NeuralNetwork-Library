@@ -15,7 +15,7 @@ public class NeuralNetwork {
      * <p>Higher values = faster training but less precision<p>
      * <p>Lower values = slower training but better precision<p>
      */
-    public float trainingCoef = 0.3f;
+    public float trainingCoef = 0.1f;
 
     private int numInputs;
     private int numHidden;
