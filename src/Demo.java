@@ -6,13 +6,12 @@ public class Demo {
     public static void main(String[] args) {
         long startTime = System.nanoTime();
 
-        NeuralNetwork brain = new NeuralNetwork(1, 50, 1);
-        brain.trainingCoef = 0.2f;
-        testSIN(brain);
+        NeuralNetwork Brain = new NeuralNetwork(1, 50, 1, 2);
+        Brain.trainingCoef = 0.1f;
+        testSIN(Brain);
 
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
-        
     }
 
     public static void testXOR(NeuralNetwork brain) {
@@ -65,7 +64,7 @@ public class Demo {
             float error = (float)Math.abs(Math.sin(angle) - out);
             sum += error;
         }
-        float averageErr = sum/500;
+        float averageErr = sum/1000;
         System.out.println("average error: " + averageErr);
         
     }

@@ -59,23 +59,21 @@ public class Matrix {
     }
 
     public Matrix randomize(int num) {
-        Matrix newMatrix = new Matrix(this.cols, this.rows);
         for (int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
-                newMatrix.data[i][j] = (int)(Math.random() * num);
+                this.data[i][j] = (int)(Math.random() * num);
             }
         }
-        return newMatrix;
+        return this;
     }
 
     public Matrix setAll(float num) {
-        Matrix newMatrix = new Matrix(this.rows, this.cols);
         for (int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
-                newMatrix.data[i][j] = num;
+                this.data[i][j] = num;
             }
         }
-        return newMatrix;
+        return this;
     }
 
     /**
