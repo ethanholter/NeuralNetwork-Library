@@ -6,9 +6,9 @@ public class Demo {
     public static void main(String[] args) {
         long startTime = System.nanoTime();
 
-        NeuralNetwork Brain = new NeuralNetwork(1, 50, 1, 2);
+        NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 2);
         Brain.trainingCoef = 0.1f;
-        testSIN(Brain);
+        testXOR(Brain);
 
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
@@ -69,12 +69,11 @@ public class Demo {
         
     }
 
-    static public final float map(float value, 
-                              float istart, 
-                              float istop, 
-                              float ostart, 
-                              float ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-}
+    // maps a number from one range to another
+    static public final float map(float value, float istart, float istop, float ostart, float ostop) {
+        return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+    }
+
+    
 
 }

@@ -1,15 +1,5 @@
 public class NeuralNetwork {
 
-    /**input to hidden*/
-    private Matrix inputWeights;
-    /**hidden to output*/
-    private Matrix hiddenWeights;
-
-    /**hidden layer bias*/
-    private Matrix hiddenBias;
-    /**output layer bias*/
-    private Matrix outputBias;
-
     /** contains all weight matrices. 
      * <p> index 0: input -> hidden1 
      * <p> index length-1: hidden -> output
@@ -20,7 +10,6 @@ public class NeuralNetwork {
      * <p> index 0: hidden 1
      * <p> index length-1: output
      * */
-
     private Matrix[] bias;
 
     /** <p>Determines how quickly the network trains. Must be between 0 and 1 <p>
@@ -64,23 +53,6 @@ public class NeuralNetwork {
             bias[i].setAll(1);
             weight[i].randomize();
         }
-
-        inputWeights = new Matrix(numHidden, numInputs);
-        hiddenWeights = new Matrix(numOutputs, numHidden);
-
-        hiddenBias = new Matrix(numHidden, 1);
-        outputBias = new Matrix(numOutputs, 1);
-
-        hiddenBias.setAll(1f);
-        outputBias.setAll(1f);
-
-        inputWeights.randomize();
-        hiddenWeights.randomize();
-
-    }
-
-    public Matrix[] getWeights() {
-        return new Matrix[]{inputWeights, hiddenWeights};
     }
 
     public void logWeights() {
@@ -127,8 +99,9 @@ public class NeuralNetwork {
     public float[] getOutputs(float[] input) {
         return getAllOutputs(input)[numHL].getDataAsList();
     }
+
     /** adjust weights and biases*/
-    private Matrix[] calcDeltaWeights(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput, int index) {
+    private Matrix[] calcDeltaWeights(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
         Matrix dWeight = new Matrix(nextNodeOutput.getRows(), 1);
         dWeight.setDataFromList(dSigmoid(nextNodeOutput.getDataAsList()));
         dWeight = dWeight.schurProd(nextNodeError);
@@ -145,12 +118,12 @@ public class NeuralNetwork {
         Matrix[] error = new Matrix[numHL + 1];
         Matrix[] outputs = getAllOutputs(inputs);
 
-        //initialize error matricies
+        //initialize error matrices
         for (int i = 0; i < error.length; i++) {
             error[i] = new Matrix(bias[i].getRows(), bias[i].getCols());
         }
 
-        //calculate the error of the output and store in the last slot of the error array (last node)
+        //calculate the error of the output and store in the last slot of the error array (Error = Answer - Guess)
         for(int i = 0; i < error[error.length - 1].getRows(); i++) {
             error[error.length - 1].data[i][0] = answer[i] - outputs[error.length - 1].data[i][0];
         }
@@ -160,49 +133,15 @@ public class NeuralNetwork {
             error[i] = weight[i + 1].transpose().multiply(error[i + 1]);
         }
 
+        //moves backwards through the NN calculating the change in weights and biases and then updating them
         for(int i = numHL; i >= 0; i--) {
-            Matrix[] dWeights = calcDeltaWeights(weight[i], bias[i], error[i], outputs[i], i > 0 ? outputs[i - 1] : new Matrix(numI, 1, inputs), i);
+            Matrix[] dWeights = calcDeltaWeights(weight[i], bias[i], error[i], outputs[i], i > 0 ? outputs[i - 1] : new Matrix(numI, 1, inputs));
             bias[i] = bias[i].add(dWeights[0]);
             weight[i] = weight[i].add(dWeights[1]);
         }
-
-        /*
-        //create matrices for input, hidden node output, and final output
-        Matrix input = new Matrix(numI, 1, inputs);
-        Matrix[] allOutputs = getAllOutputs(inputs);
-        Matrix hiddenOutput = allOutputs[0];
-        Matrix output = allOutputs[1];
-
-        //calculate output error and store in matrix
-        Matrix outputErr = new Matrix(numO, 1);
-        for(int i = 0; i < outputErr.getRows(); i++) {
-            outputErr.data[i][0] = answer[i] - output.data[i][0];
-        }
-        Matrix hiddenErr = hiddenWeights.transpose().multiply(outputErr);
-
-        //calculate change in weights for "hidden -> output" weights
-        // (Lr)(Err)[Out(1 - s(Out)] * HOutT
-        Matrix deltaHiddenWeights = new Matrix(numO, 1, output.getDataAsList());
-        deltaHiddenWeights.setDataFromList(dSigmoid(output.getDataAsList()));
-        deltaHiddenWeights = deltaHiddenWeights.schurProd(outputErr);
-        deltaHiddenWeights = deltaHiddenWeights.schurProd(trainingCoef);
-
-        //adjust weight
-        outputBias = outputBias.add(deltaHiddenWeights);
-        hiddenWeights = hiddenWeights.add(deltaHiddenWeights.multiply(hiddenOutput.transpose()));
-
-        //calculate change in weights for "input -> hidden" weights
-        Matrix deltaInputWeights = new Matrix(numH, 1, hiddenOutput.getDataAsList());
-        deltaInputWeights.setDataFromList(dSigmoid(hiddenOutput.getDataAsList()));
-        deltaInputWeights = deltaInputWeights.schurProd(hiddenErr);
-        deltaInputWeights = deltaInputWeights.schurProd(trainingCoef);
-
-        //adjust weight
-        hiddenBias = hiddenBias.add(deltaInputWeights);
-        inputWeights = inputWeights.add(deltaInputWeights.multiply(input.transpose()));
-        */
     }
 
+    // applies sigmoid function to array of nums
     private float[] sigmoid(float[] inputs) {
         for (int i = 0; i < inputs.length; i++) {
             inputs[i] = sigmoid(inputs[i]);
@@ -210,6 +149,7 @@ public class NeuralNetwork {
        return inputs;
     }
 
+    // applies the derivative of the sigmoid function to an array of numbers
     private float[] dSigmoid(float[] inputs) {
         for (int i = 0; i < inputs.length; i++) {
             inputs[i] = dSigmoid(inputs[i]);
