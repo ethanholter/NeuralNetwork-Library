@@ -4,10 +4,12 @@ public class Demo {
 
     static int iterations = 100000;
     public static void main(String[] args) {
+
         long startTime = System.nanoTime();
 
         NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 2);
         Brain.trainingCoef = 0.1f;
+        
         testXOR(Brain);
 
         long elapsedNanos = System.nanoTime() - startTime;
@@ -33,7 +35,7 @@ public class Demo {
             float out = brain.getOutputs(inputs)[0];
 
             System.out.println(Arrays.toString(inputs));
-            System.out.println(out);
+            System.out.println(roundTo(out, 3));
         }
     }
 
@@ -74,6 +76,8 @@ public class Demo {
         return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
     }
 
-    
-
+    static public final float roundTo(float val, int n) {
+        float coef = (float)Math.pow(10, n);
+        return (float)(Math.round(val * coef) / coef);
+    }
 }
