@@ -4,17 +4,22 @@ public class Demo {
 
     static int iterations = 100000;
     public static void main(String[] args) {
-
         long startTime = System.nanoTime();
 
-        NeuralNetwork Brain = new NeuralNetwork(2, 4, 1, 1);
+        NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 1);
         Brain.trainingCoef = 0.1f;
         
         testXOR(Brain);
-        System.out.println(Brain);
-
+        
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
+        System.out.println("\n" + Brain);
+    }
+
+    public static int xor(int a_, int b_) {
+        boolean a = (a_ == 1);
+        boolean b = (b_ == 1);
+        return !(a && b) && (a || b) ? 1 : 0;
     }
 
     public static void testXOR(NeuralNetwork brain) {
@@ -25,7 +30,7 @@ public class Demo {
             for (int j = 0; j < inputs.length; j++) {
                 inputs[j] = (int)(Math.random() * 2);
             }
-            answers[0] = (inputs[0] == 1 || inputs[1] == 1) && !(inputs[0] == 1 && inputs[1] == 1) ? 1 : 0;
+            answers[0] = xor((int)inputs[0], (int)inputs[1]);
             brain.train(inputs, answers);
         }
 
@@ -35,8 +40,9 @@ public class Demo {
             }
             float out = brain.getOutputs(inputs)[0];
 
-            System.out.println(Arrays.toString(inputs));
-            System.out.println(roundTo(out, 3));
+            System.out.print("expected: " + xor((int)inputs[0], (int)inputs[1]));
+            System.out.print(" recieved: " + Math.round(out));
+            System.out.println(" confidence: " + roundTo((Math.round(out) == 1 ? out : 1 - out), 3) + "%");
         }
     }
 
