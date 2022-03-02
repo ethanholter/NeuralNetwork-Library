@@ -12,7 +12,7 @@ public class NeuralNetwork {
      * */
     private Matrix[] bias;
 
-    /** <p>Determines how quickly the network trains. Must be between 0 and 1 <p>
+    /** <p>Determines how quickly the network trains. Must be between 0 and 1. The default value is 0.1
      * <p>Higher values = faster training but less precision<p>
      * <p>Lower values = slower training but better precision<p>
      */
@@ -52,18 +52,6 @@ public class NeuralNetwork {
         for (int i = 0; i < bias.length; i++) {
             bias[i].setAll(1);
             weight[i].randomize();
-        }
-    }
-
-    public void logWeights() {
-        for (Matrix matrix : weight) {
-            System.out.println(matrix + "\n");
-        }
-    }
-
-    public void logBiases() {
-        for (Matrix matrix : bias) {
-            System.out.println(matrix + "\n");
         }
     }
 
@@ -164,5 +152,16 @@ public class NeuralNetwork {
     private float dSigmoid(float x) {
         return x * (1 - sigmoid(x));
     }
+    
+    public void logWeights() {
+        for (Matrix matrix : weight) {
+            System.out.println(matrix + "\n");
+        }
+    }
 
+    public void logBiases() {
+        for (Matrix matrix : bias) {
+            System.out.println(matrix + "\n");
+        }
+    }
 }
