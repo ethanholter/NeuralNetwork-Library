@@ -4,15 +4,7 @@ This is my first attempt at creating a supervised learning neural network librar
 
 Overall this project is intended as learning experience and is in no way, shape, or form optimized for practical applications.
 
-Big thanks to 'the Coding Train' on Youtube for the helpful videos https://www.youtube.com/c/TheCodingTrain
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `bin`: the folder where compiled java files are generated
-
+It is currently capable of solving an XOR problem but is unable to solve more complex problems due to a limited number of activation functions.
 
 ## Future Plans
 

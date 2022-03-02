@@ -6,13 +6,12 @@ public class Demo {
     public static void main(String[] args) {
         long startTime = System.nanoTime();
 
-        NeuralNetwork brain = new NeuralNetwork(1, 50, 1);
-        brain.trainingCoef = 0.2f;
-        testSIN(brain);
+        NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 2);
+        Brain.trainingCoef = 0.1f;
+        testXOR(Brain);
 
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
-        
     }
 
     public static void testXOR(NeuralNetwork brain) {
@@ -58,24 +57,23 @@ public class Demo {
         }
 
         float sum = 0;
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 1000; i++) {
             float angle = (float)(Math.random() * 2 * Math.PI);
             float[] input =  {map(angle, -1, 1, 0, 1)};
             float out = brain.getOutputs(input)[0];
             float error = (float)Math.abs(Math.sin(angle) - out);
             sum += error;
         }
-        float averageErr = sum/500;
+        float averageErr = sum/1000;
         System.out.println("average error: " + averageErr);
         
     }
 
-    static public final float map(float value, 
-                              float istart, 
-                              float istop, 
-                              float ostart, 
-                              float ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-}
+    // maps a number from one range to another
+    static public final float map(float value, float istart, float istop, float ostart, float ostop) {
+        return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+    }
+
+    
 
 }
