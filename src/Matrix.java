@@ -167,7 +167,19 @@ public class Matrix {
         }
         return newMatrix;
     }
+    
+    public final Matrix round(int numDecimals) {
+        Matrix newMatrix = new Matrix(this.getRows(), this.getCols());
+        float coef = (float)Math.pow(10, numDecimals);
+        for (int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                newMatrix.data[i][j] = (float)(Math.round(this.data[i][j] * coef) / coef);
+            }
+        }
+        return newMatrix;
+    }
 
+    // this is kind of unnecessary but this adds a static version of all methods
     public static Matrix transpose(Matrix a) {
         return a.transpose();
     }
@@ -176,12 +188,12 @@ public class Matrix {
         return a.add(b);
     }
     
-    public static Matrix add(Matrix a, int b) {
-        return a.add(b);
+    public static Matrix add(Matrix a, int num) {
+        return a.add(num);
     }
     
-    public static Matrix schurProd(Matrix a, int b) {
-        return a.schurProd(b);
+    public static Matrix schurProd(Matrix a, int num) {
+        return a.schurProd(num);
     }
 
     public static Matrix schurProd(Matrix a, Matrix b) {
@@ -190,6 +202,10 @@ public class Matrix {
     
     public static Matrix multiply(Matrix a, Matrix b) {
         return a.multiply(b);
+    }
+
+    public static Matrix round(Matrix a, int num) {
+        return a.round(num);
     }
 
     public static float[][] getDataFromList(int rows, int cols, float[] list) throws ArrayIndexOutOfBoundsException {
