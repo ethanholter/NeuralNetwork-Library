@@ -164,4 +164,44 @@ public class NeuralNetwork {
             System.out.println(matrix + "\n");
         }
     }
+
+    public String toString() {
+
+        String out = "INPUT:  ";
+
+        //visualize input nodes
+        for (int i = 0; i < numI; i++) {
+            out = out + "[input  " + i + "] ";
+        }
+        out = out + "\n";
+
+        //visualize hidden nodes
+        for (int i = 0; i < numHL; i++) {
+            out = out + "HIDDEN: ";
+            for (int j = 0; j < numH; j++) {
+                out = out + "[node   " + j + "] ";
+            }
+            out = out + "\n";
+        }
+
+        //visualize output nodes
+        out = out + "OUTPUT: ";
+        for (int i = 0; i < numO; i++) {
+            out = out + "[output " + i + "] ";
+        }
+
+        
+
+        // //display hidden Weights
+        // for (int i = 0; i < weight.length; i++) {
+        //     out = out + "HIDDEN " + i + ": ";
+        //     float[] data = weight[i].round(3).getDataAsList();
+        //     for (int j = 0; j < data.length; j++) {
+        //         out = out + data[j] + " ";
+        //     }
+        //     out = out + "\n";
+        // }
+
+        return out;
+    }
 }
