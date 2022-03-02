@@ -7,10 +7,11 @@ public class Demo {
 
         long startTime = System.nanoTime();
 
-        NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 2);
+        NeuralNetwork Brain = new NeuralNetwork(2, 4, 1, 1);
         Brain.trainingCoef = 0.1f;
         
         testXOR(Brain);
+        System.out.println(Brain);
 
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
