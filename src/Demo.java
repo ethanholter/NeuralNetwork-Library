@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class Demo {
 
     static int iterations = 100000;
@@ -40,6 +38,8 @@ public class Demo {
             }
             float out = brain.getOutputs(inputs)[0];
 
+
+            //TODO Implement this directly into the Neural Network class
             System.out.print("expected: " + xor((int)inputs[0], (int)inputs[1]));
             System.out.print(" recieved: " + Math.round(out));
             System.out.println(" confidence: " + roundTo((Math.round(out) == 1 ? out : 1 - out), 3) + "%");
