@@ -11,13 +11,6 @@ public class Demo {
         
         long elapsedNanos = System.nanoTime() - startTime;
         System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
-        System.out.println("\n" + Brain);
-    }
-
-    public static float xor(float a_, float b_) {
-        boolean a = (a_ == 1);
-        boolean b = (b_ == 1);
-        return !(a && b) && (a || b) ? 1f : 0f;
     }
 
     public static void testXOR(NeuralNetwork brain) {
@@ -55,7 +48,7 @@ public class Demo {
 
             float angle = (float)(Math.random() * 2 * Math.PI);
             float[] input =  {map(angle, -1, 1, 0, 1)};
-            float out = brain.getOutputs(input)[0];
+            float out = brain.getOutput(input)[0];
             System.out.println(Math.sin(angle));
             System.out.println(map(out, 0, 1, -1, 1) + "\n");
         }
@@ -64,13 +57,20 @@ public class Demo {
         for (int i = 0; i < 1000; i++) {
             float angle = (float)(Math.random() * 2 * Math.PI);
             float[] input =  {map(angle, -1, 1, 0, 1)};
-            float out = brain.getOutputs(input)[0];
+            float out = brain.getOutput(input)[0];
             float error = (float)Math.abs(Math.sin(angle) - out);
             sum += error;
         }
         float averageErr = sum/1000;
         System.out.println("average error: " + averageErr);
         
+    }
+
+    // self explanitory
+    public static float xor(float a_, float b_) {
+        boolean a = (a_ == 1);
+        boolean b = (b_ == 1);
+        return !(a && b) && (a || b) ? 1f : 0f;
     }
 
     // maps a number from one range to another

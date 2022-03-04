@@ -83,7 +83,10 @@ public class NeuralNetwork {
         Matrix input = new Matrix(numI, 1, in);
         Matrix[] outputs = new Matrix[numHL + 1];
 
+        // gets first hidden layer
         outputs[0] = feedLayer(input, weight[0], bias[0]);
+
+        // every remaining layer
         for (int i = 1; i < numHL + 1; i++) {
             outputs[i] = feedLayer(outputs[i - 1], weight[i], bias[i]);
         }
@@ -92,11 +95,11 @@ public class NeuralNetwork {
     }
 
     //returns the output of the final layer
-    public float[] getOutputs(float[] input) {
+    public float[] getOutput(float[] input) {
         return getLayerOutputs(input)[numHL].getDataAsList();
     }
 
-    /** adjust weights and biases*/
+    //calculate the change in bias
     private Matrix getBiasGradient(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
         Matrix deltaWeight = new Matrix(nextNodeOutput.getRows(), 1);
         deltaWeight.setDataFromList(AFunctions.dSigmoid(nextNodeOutput.getDataAsList()));
@@ -106,6 +109,7 @@ public class NeuralNetwork {
         return deltaWeight;
     }
 
+    //calcuate the change in weights
     private Matrix getWeightGradient(Matrix previousNodeOutput, Matrix deltaBias) {
         return deltaBias.multiply(previousNodeOutput.transpose());
     }
@@ -144,7 +148,7 @@ public class NeuralNetwork {
     }
 
     public void logAnswer(float[] input, float[] answer) {
-        float[] rawOut = this.getOutputs(input);
+        float[] rawOut = this.getOutput(input);
         int[] out = new int[rawOut.length];
         for (int i = 0; i < rawOut.length; i++) {
             out[i] = Math.round(rawOut[i]);
@@ -153,7 +157,7 @@ public class NeuralNetwork {
         System.out.print(" actual: " + Arrays.toString(out));
 
         //TODO this wont work if there is more than one output
-        System.out.println(" confidence: " + roundTo((Math.round(rawOut[0]) == 1 ? rawOut[0] : 1 - rawOut[0]), 3) + "%");
+        System.out.println(" confidence: " + roundTo((Math.round(rawOut[0]) == 1 ? rawOut[0] : 1 - rawOut[0]), 3) * 100 + "%");
     }
 
     public String toString() {
