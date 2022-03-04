@@ -27,7 +27,7 @@ public class NeuralNetwork {
     
     public NeuralNetwork(int numInputs, int numHidden, int numOutputs, int numHLayers) {
 
-        //initialize variables
+        // [insert helpful comment here]
         this.numI = numInputs;
         this.numH = numHidden;
         this.numO = numOutputs;
@@ -37,20 +37,26 @@ public class NeuralNetwork {
         weight = new Matrix[numHLayers + 1];
         bias = new Matrix[numHLayers + 1];
 
-        //initialize weight matrices
+        //initialize weight matrix for input -> hidden layer  1
         weight[0] = new Matrix(numHidden, numInputs);
+
+        //initialize weights from hidden layer to hidden layer
         for (int i = 1; i < numHLayers; i++) {
             weight[i] = new Matrix(numHidden, numHidden);
         }
+
+        //initialize weights from final hidden layer to output
         weight[numHLayers] = new Matrix(numOutputs, numHidden);
 
-        //initialize bias matrices
+        //initialize bias matrices for hidden layers
         for (int i = 0; i < numHLayers; i++) {
             bias[i] = new Matrix(numH, 1);
         }
+
+        //bias matrix for output layer
         bias[numHL] = new Matrix(numOutputs, 1);
 
-        //populate the weights/biases matrices their initial values
+        //randomize weights and biases
         for (int i = 0; i < bias.length; i++) {
             bias[i].setAll(1);
             weight[i].randomize();
@@ -91,13 +97,17 @@ public class NeuralNetwork {
     }
 
     /** adjust weights and biases*/
-    private Matrix[] calcDeltaWeights(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
-        Matrix dWeight = new Matrix(nextNodeOutput.getRows(), 1);
-        dWeight.setDataFromList(AFunctions.dSigmoid(nextNodeOutput.getDataAsList()));
-        dWeight = dWeight.schurProd(nextNodeError);
-        dWeight = dWeight.schurProd(trainingCoef);
+    private Matrix getBiasGradient(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
+        Matrix deltaWeight = new Matrix(nextNodeOutput.getRows(), 1);
+        deltaWeight.setDataFromList(AFunctions.dSigmoid(nextNodeOutput.getDataAsList()));
+        deltaWeight = deltaWeight.schurProd(nextNodeError);
+        deltaWeight = deltaWeight.schurProd(trainingCoef);
 
-        return new Matrix[]{dWeight, dWeight.multiply(previousNodeOutput.transpose())};
+        return deltaWeight;
+    }
+
+    private Matrix getWeightGradient(Matrix previousNodeOutput, Matrix deltaBias) {
+        return deltaBias.multiply(previousNodeOutput.transpose());
     }
 
     public void train(float[] inputs, float[] answer) {
@@ -125,9 +135,11 @@ public class NeuralNetwork {
 
         //moves backwards through the NN calculating the change in weights and biases and then updating them
         for(int i = numHL; i >= 0; i--) {
-            Matrix[] dWeights = calcDeltaWeights(weight[i], bias[i], error[i], outputs[i], i > 0 ? outputs[i - 1] : new Matrix(numI, 1, inputs));
-            bias[i] = bias[i].add(dWeights[0]);
-            weight[i] = weight[i].add(dWeights[1]);
+            Matrix previousNodeOutput = i > 0 ? outputs[i - 1] : new Matrix(numI, 1, inputs);
+            Matrix deltaBias = getBiasGradient(weight[i], bias[i], error[i], outputs[i], previousNodeOutput);
+            Matrix deltaWeight = getWeightGradient(previousNodeOutput, deltaBias);
+            bias[i] = bias[i].add(deltaBias);
+            weight[i] = weight[i].add(deltaWeight);
         }
     }
 
