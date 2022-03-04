@@ -14,10 +14,10 @@ public class Demo {
         System.out.println("\n" + Brain);
     }
 
-    public static int xor(int a_, int b_) {
+    public static float xor(float a_, float b_) {
         boolean a = (a_ == 1);
         boolean b = (b_ == 1);
-        return !(a && b) && (a || b) ? 1 : 0;
+        return !(a && b) && (a || b) ? 1f : 0f;
     }
 
     public static void testXOR(NeuralNetwork brain) {
@@ -36,13 +36,8 @@ public class Demo {
             for (int j = 0; j < inputs.length; j++) {
                 inputs[j] = (int)(Math.random() * 2);
             }
-            float out = brain.getOutputs(inputs)[0];
+            brain.logAnswer(inputs, new float[] {xor(inputs[0], inputs[1])});
 
-
-            //TODO Implement this directly into the Neural Network class
-            System.out.print("expected: " + xor((int)inputs[0], (int)inputs[1]));
-            System.out.print(" recieved: " + Math.round(out));
-            System.out.println(" confidence: " + roundTo((Math.round(out) == 1 ? out : 1 - out), 3) + "%");
         }
     }
 
@@ -81,10 +76,5 @@ public class Demo {
     // maps a number from one range to another
     static public final float map(float value, float istart, float istop, float ostart, float ostop) {
         return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-    }
-
-    static public final float roundTo(float val, int n) {
-        float coef = (float)Math.pow(10, n);
-        return (float)(Math.round(val * coef) / coef);
     }
 }
