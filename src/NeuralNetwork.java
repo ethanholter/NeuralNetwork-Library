@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class NeuralNetwork {
 
     /** contains all weight matrices. 
@@ -65,13 +67,13 @@ public class NeuralNetwork {
         output.add(bias);
 
         // sigmoid function
-        output.setDataFromList(sigmoid(output.getDataAsList()));
+        output.setDataFromList(AFunctions.sigmoid(output.getDataAsList()));
 
         return output;
     }
 
-    //used internally to get outputs of all levels in network so they can be used in the backpropegation algorithm
-    public Matrix[] getAllOutputs(float[] in) {
+    //returns a Matrix for the output of every layer
+    public Matrix[] getLayerOutputs(float[] in) {
         Matrix input = new Matrix(numI, 1, in);
         Matrix[] outputs = new Matrix[numHL + 1];
 
@@ -83,15 +85,15 @@ public class NeuralNetwork {
         return outputs;
     }
 
-    //Used by end user to receive neuralnet final outputs as an array
+    //returns the output of the final layer
     public float[] getOutputs(float[] input) {
-        return getAllOutputs(input)[numHL].getDataAsList();
+        return getLayerOutputs(input)[numHL].getDataAsList();
     }
 
     /** adjust weights and biases*/
     private Matrix[] calcDeltaWeights(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
         Matrix dWeight = new Matrix(nextNodeOutput.getRows(), 1);
-        dWeight.setDataFromList(dSigmoid(nextNodeOutput.getDataAsList()));
+        dWeight.setDataFromList(AFunctions.dSigmoid(nextNodeOutput.getDataAsList()));
         dWeight = dWeight.schurProd(nextNodeError);
         dWeight = dWeight.schurProd(trainingCoef);
 
@@ -104,7 +106,7 @@ public class NeuralNetwork {
         }
 
         Matrix[] error = new Matrix[numHL + 1];
-        Matrix[] outputs = getAllOutputs(inputs);
+        Matrix[] outputs = getLayerOutputs(inputs);
 
         //initialize error matrices
         for (int i = 0; i < error.length; i++) {
@@ -129,40 +131,17 @@ public class NeuralNetwork {
         }
     }
 
-    // applies sigmoid function to array of nums
-    private float[] sigmoid(float[] inputs) {
-        for (int i = 0; i < inputs.length; i++) {
-            inputs[i] = sigmoid(inputs[i]);
+    public void logAnswer(float[] input, float[] answer) {
+        float[] rawOut = this.getOutputs(input);
+        int[] out = new int[rawOut.length];
+        for (int i = 0; i < rawOut.length; i++) {
+            out[i] = Math.round(rawOut[i]);
         }
-       return inputs;
-    }
+        System.out.print("expected: " + Arrays.toString(answer));
+        System.out.print(" actual: " + Arrays.toString(out));
 
-    // applies the derivative of the sigmoid function to an array of numbers
-    private float[] dSigmoid(float[] inputs) {
-        for (int i = 0; i < inputs.length; i++) {
-            inputs[i] = dSigmoid(inputs[i]);
-        }
-       return inputs;
-    }
-
-    private float sigmoid(float x) {
-        return (float)(1f/(1f + Math.pow(Math.E, -x)));
-    }
-
-    private float dSigmoid(float x) {
-        return x * (1 - sigmoid(x));
-    }
-    
-    public void logWeights() {
-        for (Matrix matrix : weight) {
-            System.out.println(matrix + "\n");
-        }
-    }
-
-    public void logBiases() {
-        for (Matrix matrix : bias) {
-            System.out.println(matrix + "\n");
-        }
+        //TODO this wont work if there is more than one output
+        System.out.println(" confidence: " + roundTo((Math.round(rawOut[0]) == 1 ? rawOut[0] : 1 - rawOut[0]), 3) + "%");
     }
 
     public String toString() {
@@ -203,5 +182,10 @@ public class NeuralNetwork {
         // }
 
         return out;
+    }
+
+    static public final float roundTo(float val, int n) {
+        float coef = (float)Math.pow(10, n);
+        return (float)(Math.round(val * coef) / coef);
     }
 }
