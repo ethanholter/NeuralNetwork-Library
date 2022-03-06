@@ -19,11 +19,13 @@ public class NeuralNetwork {
      * <p>Lower values = slower training but better precision<p>
      */
     public float trainingCoef = 0.1f;
+    public String activationFunction = "SIGMOID";
 
     private int numI;
     private int numH;
     private int numO;
     private int numHL;
+
     
     public NeuralNetwork(int numInputs, int numHidden, int numOutputs, int numHLayers) {
 
@@ -37,7 +39,7 @@ public class NeuralNetwork {
         weight = new Matrix[numHLayers + 1];
         bias = new Matrix[numHLayers + 1];
 
-        //initialize weight matrix for input -> hidden layer  1
+        //initialize weight matrix for input -> hidden layer  0
         weight[0] = new Matrix(numHidden, numInputs);
 
         //initialize weights from hidden layer to hidden layer
@@ -73,7 +75,7 @@ public class NeuralNetwork {
         output.add(bias);
 
         // sigmoid function
-        output.setDataFromList(AFunctions.sigmoid(output.getDataAsList()));
+        output.setDataFromList(AFunctions.activationFunction("SIGMOID", output.getDataAsList()));
 
         return output;
     }
@@ -85,12 +87,28 @@ public class NeuralNetwork {
 
         // gets first hidden layer
         outputs[0] = feedLayer(input, weight[0], bias[0]);
+        // outputs[0] = activationFunction(activationFunction, outputs[0]);
+
+
+        // every remaining layer
+        for (int i = 1; i < numHL + 1; i++) {
+            outputs[i] = feedLayer(outputs[i - 1], weight[i], bias[i]);
+            // outputs[i] = activationFunction(activationFunction, outputs[i]);
+        }
+        return outputs;
+    }
+
+    public Matrix[] getRawLayerOutputs(float[] in) {
+        Matrix input = new Matrix(numI, 1, in);
+        Matrix[] outputs = new Matrix[numHL + 1];
+
+        // gets first hidden layer
+        outputs[0] = feedLayer(input, weight[0], bias[0]);
 
         // every remaining layer
         for (int i = 1; i < numHL + 1; i++) {
             outputs[i] = feedLayer(outputs[i - 1], weight[i], bias[i]);
         }
-
         return outputs;
     }
 
@@ -102,7 +120,7 @@ public class NeuralNetwork {
     //calculate the change in bias
     private Matrix getBiasGradient(Matrix weight, Matrix bias, Matrix nextNodeError, Matrix nextNodeOutput, Matrix previousNodeOutput) {
         Matrix deltaWeight = new Matrix(nextNodeOutput.getRows(), 1);
-        deltaWeight.setDataFromList(AFunctions.dSigmoid(nextNodeOutput.getDataAsList()));
+        deltaWeight.setDataFromList(AFunctions.activationFunction("DSIGMOID", nextNodeOutput.getDataAsList()));
         deltaWeight = deltaWeight.schurProd(nextNodeError);
         deltaWeight = deltaWeight.schurProd(trainingCoef);
 
@@ -114,6 +132,11 @@ public class NeuralNetwork {
         return deltaBias.multiply(previousNodeOutput.transpose());
     }
 
+    /**
+     * this comment only exists so its easier to find this function
+     * @param inputs
+     * @param answer
+     */
     public void train(float[] inputs, float[] answer) {
         if (answer.length != numO) {
             throw new IllegalArgumentException("answer array has invalid length. Expected length: " + numO + ". Received: " + answer.length);
@@ -137,14 +160,27 @@ public class NeuralNetwork {
             error[i] = weight[i + 1].transpose().multiply(error[i + 1]);
         }
 
-        //moves backwards through the NN calculating the change in weights and biases and then updating them
         for(int i = numHL; i >= 0; i--) {
+
+            //uses input as previous output if on first hidden layer
             Matrix previousNodeOutput = i > 0 ? outputs[i - 1] : new Matrix(numI, 1, inputs);
+
             Matrix deltaBias = getBiasGradient(weight[i], bias[i], error[i], outputs[i], previousNodeOutput);
             Matrix deltaWeight = getWeightGradient(previousNodeOutput, deltaBias);
             bias[i] = bias[i].add(deltaBias);
             weight[i] = weight[i].add(deltaWeight);
+
         }
+    }
+
+    public void logWeights() {
+        System.out.println();
+        for (int i = 0; i < numHL; i++) {
+            System.out.println("Hidden " + i);
+            System.out.println(weight[i].roundTo(3));
+        }
+        System.out.println("Output");
+        System.out.println(weight[numH - 1].roundTo(3));
     }
 
     public void logAnswer(float[] input, float[] answer) {
@@ -158,18 +194,19 @@ public class NeuralNetwork {
 
         //TODO this wont work if there is more than one output
         System.out.println(" confidence: " + roundTo((Math.round(rawOut[0]) == 1 ? rawOut[0] : 1 - rawOut[0]), 3) * 100 + "%");
+
     }
-
+    
     public String toString() {
-
+        
         String out = "INPUT:  ";
-
+        
         //visualize input nodes
         for (int i = 0; i < numI; i++) {
             out = out + "[input  " + i + "] ";
         }
         out = out + "\n";
-
+        
         //visualize hidden nodes
         for (int i = 0; i < numHL; i++) {
             out = out + "HIDDEN: ";
@@ -178,28 +215,27 @@ public class NeuralNetwork {
             }
             out = out + "\n";
         }
-
+        
         //visualize output nodes
         out = out + "OUTPUT: ";
         for (int i = 0; i < numO; i++) {
             out = out + "[output " + i + "] ";
         }
-
         
-
+        
+        
         // //display hidden Weights
         // for (int i = 0; i < weight.length; i++) {
-        //     out = out + "HIDDEN " + i + ": ";
-        //     float[] data = weight[i].round(3).getDataAsList();
-        //     for (int j = 0; j < data.length; j++) {
-        //         out = out + data[j] + " ";
-        //     }
-        //     out = out + "\n";
-        // }
-
+            //     out = out + "HIDDEN " + i + ": ";
+            //     float[] data = weight[i].round(3).getDataAsList();
+            //     for (int j = 0; j < data.length; j++) {
+                //         out = out + data[j] + " ";
+                //     }
+                //     out = out + "\n";
+                // }
         return out;
     }
-
+    
     static public final float roundTo(float val, int n) {
         float coef = (float)Math.pow(10, n);
         return (float)(Math.round(val * coef) / coef);

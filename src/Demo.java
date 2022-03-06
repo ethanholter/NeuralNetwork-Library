@@ -1,22 +1,23 @@
+import java.util.Scanner;
+
 public class Demo {
 
     static int iterations = 100000;
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
 
-        NeuralNetwork Brain = new NeuralNetwork(2, 8, 1, 1);
+        NeuralNetwork Brain = new NeuralNetwork(1, 8, 1, 4);
         Brain.trainingCoef = 0.1f;
         
         testXOR(Brain);
-        
-        long elapsedNanos = System.nanoTime() - startTime;
-        System.out.println("finished after " + elapsedNanos/1000000 + " miliseconds");
+        System.out.println(Brain);
     }
 
     public static void testXOR(NeuralNetwork brain) {
+        Scanner scanner = new Scanner(System.in);
         float[] inputs = new float[2];
         float[] answers = new float[1];
 
+        long startTime = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
             for (int j = 0; j < inputs.length; j++) {
                 inputs[j] = (int)(Math.random() * 2);
@@ -25,6 +26,10 @@ public class Demo {
             brain.train(inputs, answers);
         }
 
+        long elapsedMilis = (System.nanoTime() - startTime)/1000000;
+        System.out.print("finished training after " + elapsedMilis + " miliseconds");
+        System.out.println(" (" + iterations/elapsedMilis + " iterations per milisecond)");
+
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < inputs.length; j++) {
                 inputs[j] = (int)(Math.random() * 2);
@@ -32,6 +37,7 @@ public class Demo {
             brain.logAnswer(inputs, new float[] {xor(inputs[0], inputs[1])});
 
         }
+        scanner.close();
     }
 
     public static void testSIN(NeuralNetwork brain) {

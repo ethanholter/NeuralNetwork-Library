@@ -168,7 +168,7 @@ public class Matrix {
         return newMatrix;
     }
     
-    public final Matrix round(int numDecimals) {
+    public final Matrix roundTo(int numDecimals) {
         Matrix newMatrix = new Matrix(this.getRows(), this.getCols());
         float coef = (float)Math.pow(10, numDecimals);
         for (int i = 0; i < rows; i++) {
@@ -204,8 +204,8 @@ public class Matrix {
         return a.multiply(b);
     }
 
-    public static Matrix round(Matrix a, int num) {
-        return a.round(num);
+    public static Matrix roundTo(Matrix a, int num) {
+        return a.roundTo(num);
     }
 
     public static float[][] getDataFromList(int rows, int cols, float[] list) throws ArrayIndexOutOfBoundsException {
