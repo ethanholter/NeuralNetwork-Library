@@ -2,7 +2,7 @@
 
 This is my first attempt at creating a supervised learning neural network library. It includes a 'NeuralNetwork' class and a minimal 'Matrix' class to more easily handle the math.
 
-Overall this project is intended as learning experience and is in no way, shape, or form optimized for practical applications.
+Overall this project is intended as learning experience and is not optimized for practical applications.
 
 It is currently capable of solving an XOR problem but is unable to solve more complex problems due to a limited number of activation functions.
 
